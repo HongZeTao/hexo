@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"totolove.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="索引 这个现象可能是由于数据量较小时，添加索引会导致MySQL优化器选择不同的执行计划，导致查询变慢。当数据量增加时，索引可以更好地支持查询，因此查询性能才能够得到提高。 当数据表比较小的时候，索引可能不会为查询带来优势，甚至会拖慢查询速度。这是因为，MySQL优化器会根据查询数据的大小和表结构以及索引的情况来选择执行计划。如果数据量较小，可能会选择全表扫描来进行查询，而不是使用索引。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql--MySQL索引">
+<meta property="og:url" content="https://totolove.cn/2023/08/25/Java/Mysql%E5%BA%94%E7%94%A8/MySQL%E7%B4%A2%E5%BC%95/index.html">
+<meta property="og:site_name" content="TOTO_LOVE">
+<meta property="og:description" content="索引 这个现象可能是由于数据量较小时，添加索引会导致MySQL优化器选择不同的执行计划，导致查询变慢。当数据量增加时，索引可以更好地支持查询，因此查询性能才能够得到提高。 当数据表比较小的时候，索引可能不会为查询带来优势，甚至会拖慢查询速度。这是因为，MySQL优化器会根据查询数据的大小和表结构以及索引的情况来选择执行计划。如果数据量较小，可能会选择全表扫描来进行查询，而不是使用索引。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-25T07:57:32.575Z">
+<meta property="article:modified_time" content="2023-08-25T08:32:06.084Z">
+<meta property="article:author" content="TOTO_LOVE">
+<meta property="article:tag" content="Mysql">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://totolove.cn/2023/08/25/Java/Mysql%E5%BA%94%E7%94%A8/MySQL%E7%B4%A2%E5%BC%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Mysql--MySQL索引 | TOTO_LOVE</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="TOTO_LOVE" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TOTO_LOVE</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://totolove.cn/2023/08/25/Java/Mysql%E5%BA%94%E7%94%A8/MySQL%E7%B4%A2%E5%BC%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="TOTO_LOVE">
+      <meta itemprop="description" content="在欲望中劝解自己">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TOTO_LOVE">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Mysql--MySQL索引
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-08-25 15:57:32 / 修改时间：16:32:06" itemprop="dateCreated datePublished" datetime="2023-08-25T15:57:32+08:00">2023-08-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index"><span itemprop="name">Mysql</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><blockquote>
+<p>这个现象可能是由于数据量较小时，添加索引会导致MySQL优化器选择不同的执行计划，导致查询变慢。当数据量增加时，索引可以更好地支持查询，因此查询性能才能够得到提高。</p>
+<p>当数据表比较小的时候，索引可能不会为查询带来优势，甚至会拖慢查询速度。这是因为，MySQL优化器会根据查询数据的大小和表结构以及索引的情况来选择执行计划。如果数据量较小，可能会选择全表扫描来进行查询，而不是使用索引。<span id="more"></span></p>
+<p>但是，当数据量逐渐增加时，MySQL优化器会更倾向于使用索引来加速查询，这是因为全表扫描会随着数据量的增加而变得越来越慢，而索引可以更快地定位到需要查询的数据。</p>
+<p>因此，在设计数据库时，通常需要根据实际情况进行索引设计。对于数据量较小的表，可能不需要创建过多的索引，可以通过优化其他方面的查询条件来提高查询性能。而对于数据量较大的表，多创建一些合理的索引是很有必要的，可以提高查询速度，提升数据库的性能。</p>
+</blockquote>
+<h2 id="索引字段在满足业务需求的同时尽量保持小"><a href="#索引字段在满足业务需求的同时尽量保持小" class="headerlink" title="索引字段在满足业务需求的同时尽量保持小"></a>索引字段在满足业务需求的同时尽量保持小</h2><blockquote>
+<p>应该在索引字段的长度满足业务需求的同时尽量保持小。因为在索引中存储的数据量越小，查询时扫描的数据量也就越小，查询速度也就越快。</p>
+<p>如果字符串类型的索引字段长度太长，将会导致索引树分支过多，占用更多的存储空间，在查询时也会降低查询的速度和效率，因此可以采取以下措施：</p>
+<ol>
+<li>如果索引字段长度较长，可以尝试使用前缀索引，只对索引的前几个字符进行索引，这样可以节省存储空间，同时也可以加快查询速度。</li>
+<li>如果业务需求不允许使用前缀索引，则需要权衡长度和查询效率之间的关系，选取合适的索引字段长度。</li>
+</ol>
+<p>综上所述，索引字段长度不应过长，应该根据业务需求选择合适的长度，也可尝试使用前缀索引来优化查询效率。</p>
+<p>测试结果：varchar(100) &#x3D; 0.78;varchar(20)&#x3D;0.45</p>
+</blockquote>
+<h2 id="多个索引时，最左匹配原则"><a href="#多个索引时，最左匹配原则" class="headerlink" title="多个索引时，最左匹配原则"></a>多个索引时，最左匹配原则</h2><blockquote>
+<p>$\textcolor{green}{在多个索引的情况下，根据最左匹配原则，应该优先将常用的查询条件放在索引的最左侧，在此基础上再考虑其他查询条件。} $</p>
+<p>具体来说，假设有以下查询条件：</p>
+<ol>
+<li>A&#x3D;1</li>
+<li>B&#x3D;2</li>
+<li>C&#x3D;3</li>
+</ol>
+<p>如果经常以 A、B、C 依次作为查询条件进行查询，那么最佳的索引顺序应该是 ABC，这样可以让索引最大限度地发挥作用，提高查询效率。如果查询条件的使用频率不同，那么索引的排列顺序也可能需要做出调整。</p>
+<p>此外，还需要注意以下几点：</p>
+<ol>
+<li>防止冗余索引：索引越多，写入时的维护成本就越高，因此需要避免创建大量冗余的索引。</li>
+<li>索引的选择性越高，效果越好：索引的选择性指索引列的离散度，如果索引列的相同值较少，那么索引就会更有效。举个例子，如果索引的列中有 A、B、C、D 四个值，但是其中 A 的占比很高，那么就应该将 A 放在索引的最左侧。</li>
+</ol>
+<p>综上所述，根据最左匹配原则，应该根据查询条件的使用频率和索引选择性来保证索引的优先级，在决定索引的排列顺序时需要权衡多方面因素，包括查询效率、索引的选择性、索引的数量等，以达到一个最佳的索引方案。</p>
+<p>除了最左匹配原则，还有以下几个方面需要注意：</p>
+<ol>
+<li>联合索引的顺序：如果存在联合索引，需要根据最左匹配原则来选择索引列的顺序，并考虑每个索引列的选择性，让选择性最高的列放在最左侧，这样可以让查询效率更高。</li>
+<li>避免重复的索引：重复索引会浪费存储空间，在更新数据时会降低写入性能，因此需要避免创建重复的索引。</li>
+<li>为复合索引减少索引列：复合索引中的索引列越多，查询效率就越低，因此需要选择最少的索引列来满足业务需求。</li>
+<li>不要将所有列都加入索引：虽然索引可以提高查询速度，但是将所有列都加入索引会浪费存储空间，降低索引写入性能，因此需要只对最常用的列或者最有选择性的列进行索引。</li>
+</ol>
+</blockquote>
+<h2 id="索引第一次查询和第二次查询速度差异较大原因"><a href="#索引第一次查询和第二次查询速度差异较大原因" class="headerlink" title="索引第一次查询和第二次查询速度差异较大原因"></a>索引第一次查询和第二次查询速度差异较大原因</h2><blockquote>
+<p>第一次查询耗时0.6秒，第二次查询仅耗时0.2秒</p>
+<p>第一次查询需要从磁盘中读取索引结构和数据页信息，因此查询的耗时较长。而第二次查询时，索引结构和数据页信息已经被读取到内存中，并且可能已经被缓存到更快的存储设备中，因此查询的耗时就会更短。可以说，索引的加速作用不仅限于提高第二次查询的速度，而且还可以加速第一次查询的速度。</p>
+<p>需要注意的是，索引的缓存是一个基于内存的过程。如果索引结构非常大，无法完全缓存在内存中，那么就可能需要在查询时从磁盘中读取索引结构的某些部分，这也会影响查询的速度。因此，在创建索引时需要考虑索引的大小和内存大小之间的平衡，以达到最优的性能和效率。</p>
+</blockquote>
+<h2 id="char和varchar"><a href="#char和varchar" class="headerlink" title="char和varchar"></a>char和varchar</h2><blockquote>
+<p>char和varchar都是表示字符串类型的数据。它们之间的主要区别在于char类型的存储空间是固定的，而varchar类型的存储空间是可变的。</p>
+<p>在创建表时，如果我们知道某个字段的长度是固定的，例如身份证号、邮政编码等，那么使用char类型会更加合适。</p>
+<p>$\textcolor{green}{因为char类型的存储空间是固定的，存储和查询的效率更高，而且对于固定长度字段的优化也更容易实现。同时，在对固定长度字段进行插入和更新操作时，}$</p>
+<p>$\textcolor{green}{也不需要进行额外的空间分配和释放操作。}$ </p>
+<p>而当我们不确定某个字段的长度时，例如用户名、地址等，使用varchar类型会更加合适。因为varchar类型的存储空间是可变的，可以根据实际需要分配空间。这种类型的字符串可以节省存储空间，同时也可以更加灵活地应对复杂的业务场景。</p>
+<p>总的来说，在创建表时，使用char类型比varchar类型更加适合既定长度的字符串，因为char类型的效率更高，更加适用于固定长度字段的优化。而在不确定长度的情况下，使用varchar类型更加灵活和节省存储空间。不同场景下选取适当的数据类型可以提高数据库的性能。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>TOTO_LOVE
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://totolove.cn/2023/08/25/Java/Mysql%E5%BA%94%E7%94%A8/MySQL%E7%B4%A2%E5%BC%95/" title="Mysql--MySQL索引">https://totolove.cn/2023/08/25/Java/Mysql应用/MySQL索引/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Mysql/" rel="tag"># Mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/25/Java/Mysql%E5%BA%94%E7%94%A8/Mysql%20%E5%92%8C%20%E5%86%85%E5%AD%98%E7%BC%93%E5%AD%98/" rel="prev" title="Mysql--Mysql 和 内存缓存">
+      <i class="fa fa-chevron-left"></i> Mysql--Mysql 和 内存缓存
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/25/Java/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9B%B8%E5%85%B3/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%20HSTS%20%E7%AD%96%E7%95%A5/" rel="next" title="浏览器的HSTS策略">
+      浏览器的HSTS策略 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81ODkwNC8zNTM2Ng=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">1.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%AD%97%E6%AE%B5%E5%9C%A8%E6%BB%A1%E8%B6%B3%E4%B8%9A%E5%8A%A1%E9%9C%80%E6%B1%82%E7%9A%84%E5%90%8C%E6%97%B6%E5%B0%BD%E9%87%8F%E4%BF%9D%E6%8C%81%E5%B0%8F"><span class="nav-number">2.</span> <span class="nav-text">索引字段在满足业务需求的同时尽量保持小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E4%B8%AA%E7%B4%A2%E5%BC%95%E6%97%B6%EF%BC%8C%E6%9C%80%E5%B7%A6%E5%8C%B9%E9%85%8D%E5%8E%9F%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">多个索引时，最左匹配原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%9F%A5%E8%AF%A2%E5%92%8C%E7%AC%AC%E4%BA%8C%E6%AC%A1%E6%9F%A5%E8%AF%A2%E9%80%9F%E5%BA%A6%E5%B7%AE%E5%BC%82%E8%BE%83%E5%A4%A7%E5%8E%9F%E5%9B%A0"><span class="nav-number">4.</span> <span class="nav-text">索引第一次查询和第二次查询速度差异较大原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#char%E5%92%8Cvarchar"><span class="nav-number">5.</span> <span class="nav-text">char和varchar</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="TOTO_LOVE"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">TOTO_LOVE</p>
+  <div class="site-description" itemprop="description">在欲望中劝解自己</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/HongZeTao" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;HongZeTao" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://space.bilibili.com/501896724" title="https:&#x2F;&#x2F;space.bilibili.com&#x2F;501896724" rel="noopener" target="_blank">TOTOWaveRider</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2023-08 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TOTO_LOVE</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

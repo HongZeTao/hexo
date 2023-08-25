@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"totolove.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="基本数据类型 byte、short、int、long float、double chat boolean  引用数据类型 类、数组、接口、枚举、注释、记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java基础--02变量和运算符">
+<meta property="og:url" content="https://totolove.cn/2023/08/25/Java/Java%E5%9F%BA%E7%A1%80/02.%E5%8F%98%E9%87%8F%E5%92%8C%E8%BF%90%E7%AE%97%E7%AC%A6/index.html">
+<meta property="og:site_name" content="TOTO_LOVE">
+<meta property="og:description" content="基本数据类型 byte、short、int、long float、double chat boolean  引用数据类型 类、数组、接口、枚举、注释、记录">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-25T06:23:20.985Z">
+<meta property="article:modified_time" content="2023-08-25T07:13:47.716Z">
+<meta property="article:author" content="TOTO_LOVE">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://totolove.cn/2023/08/25/Java/Java%E5%9F%BA%E7%A1%80/02.%E5%8F%98%E9%87%8F%E5%92%8C%E8%BF%90%E7%AE%97%E7%AC%A6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java基础--02变量和运算符 | TOTO_LOVE</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="TOTO_LOVE" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">TOTO_LOVE</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://totolove.cn/2023/08/25/Java/Java%E5%9F%BA%E7%A1%80/02.%E5%8F%98%E9%87%8F%E5%92%8C%E8%BF%90%E7%AE%97%E7%AC%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="TOTO_LOVE">
+      <meta itemprop="description" content="在欲望中劝解自己">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TOTO_LOVE">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java基础--02变量和运算符
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-08-25 14:23:20 / 修改时间：15:13:47" itemprop="dateCreated datePublished" datetime="2023-08-25T14:23:20+08:00">2023-08-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h2><ul>
+<li>byte、short、int、long</li>
+<li>float、double</li>
+<li>chat</li>
+<li>boolean</li>
+</ul>
+<h2 id="引用数据类型"><a href="#引用数据类型" class="headerlink" title="引用数据类型"></a>引用数据类型</h2><ul>
+<li>类、数组、接口、枚举、注释、记录</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="基本数据类型变量间的自动提升和强制类型转化"><a href="#基本数据类型变量间的自动提升和强制类型转化" class="headerlink" title="基本数据类型变量间的自动提升和强制类型转化"></a>基本数据类型变量间的自动提升和强制类型转化</h2><ul>
+<li>自动提升：(byte —&gt; short) byte、short、char —&gt; int —&gt; long —&gt; float —&gt; double</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">byte</span> <span class="variable">a</span> <span class="operator">=</span><span class="number">1</span>; <span class="type">short</span> <span class="variable">b</span> <span class="operator">=</span> a;</span><br><span class="line"><span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> a + b;  <span class="comment">// byte、short、char 之间两两运算，最低转化为int</span></span><br><span class="line"><span class="type">float</span> <span class="variable">d</span> <span class="operator">=</span> c; <span class="type">double</span> <span class="variable">e</span> <span class="operator">=</span> d;</span><br><span class="line"><span class="type">char</span> <span class="variable">f</span> <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span>; <span class="type">int</span> <span class="variable">g</span> <span class="operator">=</span> a + f; <span class="comment">// byte、short、char 之间两两运算，最低转化为int</span></span><br><span class="line"><span class="type">long</span> <span class="variable">h</span> <span class="operator">=</span> <span class="number">123</span>; <span class="comment">// 整形常量默认int，自动类型提升，int ---&gt; long</span></span><br><span class="line"><span class="comment">// 不满足示例</span></span><br><span class="line"><span class="type">float</span> = <span class="number">12.3</span>; <span class="comment">// 浮点常量默认double，double ---&gt; float 无法自动提升</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>强制类型转化：无法自动提升的可进行强制类型转化，有可能发生数据丢失或者精度丢失（高位截断（抛弃））。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> <span class="variable">g</span> <span class="operator">=</span> (<span class="type">float</span>) <span class="number">12.3</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">g</span> <span class="operator">=</span> (<span class="type">int</span>) <span class="number">12.3</span>; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>引用类型强制转化：父类向子类强制转换，如果成功不会有任何数据丢失，如果不是子类，那么会报错。</li>
+</ul>
+</blockquote>
+<h2 id="String-引用类型"><a href="#String-引用类型" class="headerlink" title="String 引用类型"></a>String 引用类型</h2><p>String 可通过运算符”+”与任意基本类型拼接，最终是String。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> <span class="number">1</span> + <span class="string">&quot;aaa&quot;</span> + <span class="literal">true</span>; <span class="comment">// 结果为&quot;1aaatrue&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>运算是从左到右的（同级，无括号）</li>
+<li>()最优先，接下来看运算符优先级</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> <span class="number">1</span> + <span class="literal">true</span> + <span class="string">&quot;aaa&quot;</span>; <span class="comment">// error：运算符 &#x27;+&#x27; 不能应用于 &#x27;int&#x27;、&#x27;boolean&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="number">3</span> + <span class="number">4</span> + <span class="string">&quot;Hello&quot;</span>); <span class="comment">// 输出：&quot;7Hello&quot;</span></span><br><span class="line">System.out.println(<span class="string">&quot;Hello&quot;</span> + <span class="number">3</span> + <span class="number">4</span>); <span class="comment">// 输出：&quot;Hello34&quot;</span></span><br><span class="line">System.out.println(<span class="string">&#x27;a&#x27;</span> + <span class="number">1</span> + <span class="string">&quot;Hello&quot;</span>); <span class="comment">// 输出：&quot;98Hello&quot;</span></span><br><span class="line">System.out.println(<span class="string">&quot;Hello&quot;</span> + <span class="string">&#x27;a&#x27;</span> + <span class="number">1</span>); <span class="comment">// 输出：&quot;Helloa1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="计算机底层如何存储数据–二进制"><a href="#计算机底层如何存储数据–二进制" class="headerlink" title="计算机底层如何存储数据–二进制"></a>计算机底层如何存储数据–二进制</h2><p>为什么int 的128 强转为byte 是-128？</p>
+<p>int 的128：**0000 0000 0000 0000 0000 0000 <font color="#ff9700">1000 0000</font>**；</p>
+<p>强制转换为byte，仅保留 <strong>1000 0000</strong>，即-128。</p>
+<p>补码存储 1000 0000，反码：1111 1111，原码：1000 0000</p>
+<ul>
+<li>计算机底层是使用二进制 <font color="#ff9700">补码</font> 的形式存储的</li>
+<li>高位截断</li>
+</ul>
+<blockquote>
+<p>面试题：</p>
+<ol>
+<li><p>高效计算 2 * 8 的值，2 &lt;&lt; 3。因为计算机底层是二进制的，左右移是对二进制数进行操作，更高效。</p>
+</li>
+<li><p>&amp; 和 &amp;&amp; 的区别？</p>
+<ul>
+<li><p>同，都表示且运算，两边都满足才为true；</p>
+</li>
+<li><p>异，&amp; 不论左右 true 或 false，都会继续运算，&amp;&amp; 左右为false，停止运算。</p>
+</li>
+</ul>
+</li>
+<li><p>Java 的基本数据类型：整：byte、short、int、long；浮：float、double；布：boolean；字：char。String 不是基本数据类型。</p>
+</li>
+<li><p>实际应用中计算金额使用BigDecimal ，更高的精度，不失真。float 和 double 精度不高，易失真。</p>
+</li>
+<li><p>char 变量类型能存储中文汉字，是因为char 使用的是Unicode 字符集，基本包含了世界上所有的字符。</p>
+</li>
+<li><p>替换两个变量的值使用一个临时变量。</p>
+</li>
+</ol>
+<blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i = i++; <span class="comment">// i = 0</span></span><br><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i++;</span><br></pre></td></tr></table></figure>
+
+<p>在JLS(<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jls/se17/jls17.pdf">Java® Language Specification - Oracle</a>)中对求值顺序的规定，后缀增量运算符是优于普通赋值运算符的</p>
+<p>简单地说，<code>i = i++</code> 的执行过程是这样的：</p>
+<ol>
+<li>首先，<code>i++</code> 会被执行。在执行的过程中，<code>i</code> 的值会被临时存储在操作数栈（在这里是0），然后 <code>i</code> 的值会增加 1。</li>
+<li>接着，<code>i = </code>的赋值操作会执行，把 <code>i++</code> 的结果（即临时存储的值，也就是 <code>i</code> 在增加之前的值0）赋给 <code>i</code></li>
+</ol>
+<p>因此，即使 <code>i</code> 的值在 <code>i++</code> 的过程中增加了，但最后 <code>i</code> 的值还是被 <code>i++</code> 的结果（即 <code>i</code> 在增加之前的值）覆盖了，所以最终 <code>i</code> 的值还是 0。</p>
+</blockquote>
+<ol start="8">
+<li><p>为什么float 和 double 会造成精度丢失？</p>
+<p>IEEE 754标准。</p>
+<ul>
+<li>整数变为二进制，能够做到“每个十进制数都有对应的二进制数”</li>
+<li>小数无法做到“每个小数都有对应的二进制数”。二进制小数0.0010表示十进制小数0.125，二进制小数0.0011表示十进制小数0.1875，所以无法使用二进制小数的形式表示0.125~0.1875之间的十进制小数。</li>
+</ul>
+<p>实际开发中建议使用<code>BigDecimal</code>，也可以采用<code>四舍五入</code>或者<code>同乘同除</code>方法。</p>
+</li>
+</ol>
+</blockquote>
+<h2 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h2><ul>
+<li>算术运算符：<code>+</code>、<code>-</code>、<code>*</code>、<code>/</code>、<code>%</code>、<code>++</code>、<code>--</code></li>
+<li>复制运算符：<code>=</code></li>
+<li>比较运算符：<code>&gt;</code>、<code>&lt;</code>、<code>&gt;=</code>、<code>&lt;=</code>、<code>==</code>、<code>！=</code></li>
+<li>逻辑运算符：<code>&amp;</code>、<code>|</code>、<code>!</code>、<code>&amp;&amp;</code>、<code>||</code>、<code>^(异或)</code></li>
+<li>位运算符：<code>&gt;&gt;</code>、<code>&lt;&lt;</code>、<code>&gt;&gt;&gt;(无符号右移)</code>、<code>&amp;</code>、<code>|</code>、<code>^</code>、<code>~(取反)</code></li>
+<li>条件运算符：(条件表达式)?yes:no</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>TOTO_LOVE
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://totolove.cn/2023/08/25/Java/Java%E5%9F%BA%E7%A1%80/02.%E5%8F%98%E9%87%8F%E5%92%8C%E8%BF%90%E7%AE%97%E7%AC%A6/" title="Java基础--02变量和运算符">https://totolove.cn/2023/08/25/Java/Java基础/02.变量和运算符/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/25/Java/Java%E5%9F%BA%E7%A1%80/01.Java%E5%92%8CJVM/" rel="prev" title="Java基础--01Java和JVM的概念">
+      <i class="fa fa-chevron-left"></i> Java基础--01Java和JVM的概念
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/25/Java/Java%E5%9F%BA%E7%A1%80/03%20%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/" rel="next" title="Java基础--03流程控制">
+      Java基础--03流程控制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81ODkwNC8zNTM2Ng=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">基本数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">引用数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%8F%98%E9%87%8F%E9%97%B4%E7%9A%84%E8%87%AA%E5%8A%A8%E6%8F%90%E5%8D%87%E5%92%8C%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">基本数据类型变量间的自动提升和强制类型转化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String-%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">String 引用类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%BA%95%E5%B1%82%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E6%95%B0%E6%8D%AE%E2%80%93%E4%BA%8C%E8%BF%9B%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">计算机底层如何存储数据–二进制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">6.</span> <span class="nav-text">运算符</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="TOTO_LOVE"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">TOTO_LOVE</p>
+  <div class="site-description" itemprop="description">在欲望中劝解自己</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/HongZeTao" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;HongZeTao" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://space.bilibili.com/501896724" title="https:&#x2F;&#x2F;space.bilibili.com&#x2F;501896724" rel="noopener" target="_blank">TOTOWaveRider</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2023-08 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TOTO_LOVE</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
